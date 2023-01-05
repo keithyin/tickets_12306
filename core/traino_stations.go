@@ -78,12 +78,15 @@ func (receiver *TrainoStations) GetStationsBetweenFromTo(from string, to string,
 	return results
 }
 
-func (receiver *TrainoStations) GetStationsAfterTo(to string) []string {
+func (receiver *TrainoStations) GetStationsAfterTo(to string, inclusive bool) []string {
 	if receiver.Traino == "" {
 		logrus.Fatal("run .Init first")
 	}
 
 	results := make([]string, 0)
+	if inclusive {
+		results = append(results, to)
+	}
 	do_record := false
 	for _, station := range receiver.Stations {
 		if do_record {
