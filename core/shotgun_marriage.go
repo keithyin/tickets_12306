@@ -42,18 +42,19 @@ func (receiver *ShotgunMarriageStra) Do(ctx context.Context) []ValidTainoInfo {
 			idx := intermediate_station_num - n - 1
 			new_to := stations[idx]
 
-			logrus.WithFields(logrus.Fields{
-				"traino":          traino_stations.Traino,
-				"lookup_stations": stations,
-				"from":            receiver.From,
-				"current_to":      new_to,
-			}).Warn("check whether from -> to has ticket")
-
 			valid := IsTicketValid(ctx, traino_stations.Traino, receiver.From, new_to, receiver.DateStr)
 			if valid {
 				valid_res = append(valid_res,
 					ValidTainoInfo{From: receiver.From, To: new_to, Triano: traino_stations.Traino})
 			}
+
+			logrus.WithFields(logrus.Fields{
+				"traino":          traino_stations.Traino,
+				"lookup_stations": stations,
+				"from":            receiver.From,
+				"current_to":      new_to,
+				"has_ticket":      valid,
+			}).Warn("check whether has ticket")
 
 		}
 
