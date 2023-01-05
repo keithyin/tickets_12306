@@ -57,7 +57,7 @@ func IsTicketValid(ctx context.Context, traino string, from string, to string, d
 		select_station_func(to),
 		chromedp.SetValue(`#train_date`, date_str),
 		chromedp.Click(`#search_one`),
-		chromedp.Sleep(100*time.Millisecond),
+		chromedp.Sleep(50*time.Millisecond),
 	)
 	if err != nil {
 		logrus.Fatal(err)
@@ -158,7 +158,7 @@ func GetAllTrainoFromTo(ctx context.Context, from string, to string, date_str st
 		select_station_func(to),
 		chromedp.SetValue(`#train_date`, date_str),
 		chromedp.Click(`#search_one`),
-		chromedp.Sleep(100*time.Millisecond),
+		chromedp.Sleep(50*time.Millisecond),
 	)
 	if err != nil {
 		logrus.Fatal(err)
