@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/chromedp/cdproto/cdp"
+	"github.com/chromedp/cdproto/dom"
+	"github.com/chromedp/cdproto/input"
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/cdproto/target"
 	"github.com/chromedp/chromedp"
@@ -178,11 +180,64 @@ func main() {
 				if train_no_str == expected_train_no {
 					query_id = fmt.Sprintf(`#%s > td.no-br > a`, ticket_id)
 					fmt.Println(query_id)
-					res := ""
 
-					js_script := fmt.Sprintf(`document.querySelector("%s").click()`, query_id)
-					fmt.Println(js_script)
-					chromedp.Evaluate(js_script, &res).Do(ctx)
+					// 似乎这个滑动是没有必要的！！！！
+					for i := 0; i < 0; i++ {
+						nodes := make([]*cdp.Node, 0)
+						err = chromedp.Nodes(query_id, &nodes, chromedp.AtLeast(0), chromedp.NodeVisible).Do(ctx)
+						if err != nil {
+							return err
+						}
+						if len(nodes) > 0 {
+							break
+						}
+
+						p := &input.DispatchMouseEventParams{
+							Type:   input.MouseWheel,
+							X:      0,
+							Y:      0,
+							DeltaX: 10,
+							DeltaY: 10,
+						}
+						err = p.Do(ctx)
+						if err != nil {
+							return err
+						}
+					}
+
+					err = chromedp.QueryAfter(query_id, func(ctx context.Context, eci runtime.ExecutionContextID, n ...*cdp.Node) error {
+						node := n[0]
+						quads, err := dom.GetContentQuads().WithNodeID(node.NodeID).Do(ctx)
+						if err != nil {
+							return err
+						}
+						quad := quads[0]
+						left_up_x := quad[0]
+						left_up_y := quad[1]
+						right_down_x := quad[2]
+						right_down_y := quad[3]
+						fmt.Printf("left_up_x:%f, left_up_y:%f, right_down_x:%f, right_down_y:%f\n", left_up_x, left_up_y, right_down_x, right_down_y)
+						p := &input.DispatchMouseEventParams{
+							Type:   input.MouseWheel,
+							X:      0,
+							Y:      0,
+							DeltaX: (left_up_x + right_down_x) / 2,
+							DeltaY: (left_up_y + right_down_y) / 2,
+						}
+						err = p.Do(ctx)
+						if err != nil {
+							return err
+						}
+						return nil
+
+					}).Do(ctx)
+					if err != nil {
+						return err
+					}
+
+					// js_script := fmt.Sprintf(`document.querySelector("%s").click()`, query_id)
+					// fmt.Println(js_script)
+					// chromedp.Evaluate(js_script, &res).Do(ctx)
 
 					err = chromedp.Click(query_id).Do(ctx)
 					if err != nil {
