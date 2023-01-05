@@ -49,11 +49,11 @@ func (receiver *ShotgunMarriageStra) Do(ctx context.Context) []ValidTainoInfo {
 			}
 
 			logrus.WithFields(logrus.Fields{
-				"traino":          traino_stations.Traino,
-				"lookup_stations": stations,
-				"from":            receiver.From,
-				"current_to":      new_to,
-				"has_ticket":      valid,
+				"01_from":            receiver.From,
+				"02_current_to":      new_to,
+				"03_has_ticket":      valid,
+				"04_traino":          traino_stations.Traino,
+				"05_lookup_stations": stations,
 			}).Warn("check whether has ticket")
 
 		}
