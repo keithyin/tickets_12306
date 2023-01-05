@@ -14,6 +14,7 @@ import (
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/cdproto/target"
 	"github.com/chromedp/chromedp"
+	"github.com/keithyin/tickets_12306/core"
 )
 
 func select_station_func(target_station_name string) chromedp.ActionFunc {
@@ -46,7 +47,7 @@ func select_station_func(target_station_name string) chromedp.ActionFunc {
 	})
 }
 
-func main() {
+func main2() {
 
 	from_station := "北京"
 	to_station := "徐州"
@@ -266,4 +267,13 @@ func main() {
 	time.Sleep(time.Second * 5)
 
 	fmt.Println("hello")
+}
+
+func main() {
+	from := "北京"
+
+	to := "枣庄"
+	date_str := "2023-01-19"
+
+	core.ShotgunMarriageStraPipeline(from, to, date_str, []string{"K101", "G2565", "G2581"})
 }
